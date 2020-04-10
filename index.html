@@ -381,14 +381,6 @@
         newXHR.send(null);
       }
 
-      var e;
-      e = new XMLHttpRequest();
-      e.open('GET', '/collect', true);
-      e.onreadystatechange = function(e) {
-        // console.log(e.responseText);
-      };
-      e.send(null);
-
       function checkIfNum(str)
       {
         if(isNaN(str) || str == undefined)
