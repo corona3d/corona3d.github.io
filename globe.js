@@ -387,7 +387,7 @@ DAT.Globe = function(container, colorFn) {
 
   function zoom(delta) {
     distanceTarget -= delta;
-    distanceTarget = distanceTarget > 1200 ? 1200 : distanceTarget; // > num == zoom max
+    distanceTarget = distanceTarget > 1500 ? 1500 : distanceTarget; // > num == zoom max
     distanceTarget = distanceTarget < 350 ? 350 : distanceTarget; // < num == zoom min
   }
 
