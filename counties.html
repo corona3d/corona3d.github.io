@@ -167,9 +167,6 @@
   <script type="text/javascript" src="globe.js"></script>
   <script type="text/javascript">
 
-    // var countryLocation = document.getElementById("totals").offsetHeight + 20;
-    // document.getElementById('topcountries').style.top = countryLocation + 20;
-
     var IS_COUNTY = true;
 
     window.totalsPerDate = {};
@@ -347,8 +344,6 @@
                                 });
                                 currentInfo.appendChild(daySlider);
 
-                                // var dayInput = document.getElementById('daySlider');
-                                // dayInput
 
                                 var currentDay = document.createElement('span');
                                 currentDay.id = 'currentDay';
@@ -356,13 +351,12 @@
                                 currentDay.style.padding = "10px";
                                 currentDay.style.fontWeight = "bold";
                                 currentDay.style.fontSize = "15px";
-                                console.log(currentDay)
                                 currentInfo.appendChild(currentDay)
 
                                 globe.createPoints();
                                 settime(globe,formattedData.length-1)();
                                 globe.animate();
-                                document.body.style.backgroundImage = 'none'; // remove loading
+                                document.body.style.backgroundImage = 'none';
                               }
                             }
                           };
@@ -426,18 +420,6 @@
         recovered.shift();
 
         let megaData = [];
-
-        // console.log(focusedHeaders)
-
-        /*let maxConfirmed = 0;
-        for(let i = 0; i < confirmed.length; i++)
-        {
-          let tmpConfirmed = Math.abs(confirmed[i][headers.length-1]);
-          if(maxConfirmed < tmpConfirmed)
-          {
-            maxConfirmed = tmpConfirmed;
-          }
-        }*/
 
         for(let currentDate = 4; currentDate < headers.length; currentDate++)
         {
@@ -610,15 +592,6 @@
         return megaData;
       }
 
-      // USA Data:
-      // https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_US.csv
-      // https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_US.csv
-
-      // archived data: (has everything else + most recent)
-      //  https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv
-      //  https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv
-      //  https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv
-
 
       function processCSV(allText)
       {
@@ -632,24 +605,9 @@
             var data = allTextLines[i].split(',');
             var tarr = [];
             for (var j=0; j<headers.length; j++) {
-                // console.log(data[j])
                 tarr.push(data[j]);
             }
             lines.push(tarr);
-           /* if (data.length == headers.length) {
-
-                var tarr = [];
-                for (var j=0; j<headers.length; j++) {
-                    // console.log(data[j])
-                    tarr.push(data[j]);
-                }
-                lines.push(tarr);
-            }
-            else
-            {
-              console.log(headers.length, data.length)
-            }*/
-            
         }
         return lines;
       }
