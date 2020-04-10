@@ -467,7 +467,11 @@
           for(let i = 0; i < confirmed.length; i++)
           {
             let tmpConfirmed = Math.abs(confirmed[i][currentDate]);
-            let currentCountry = confirmed[i][1].replace('*', '').replace('\"', '');
+            let currentCountry = undefined;
+            if(confirmed[i][1] != undefined)
+            {
+               currentCountry = confirmed[i][1].replace('*', '').replace('\"', '');
+            }
             if(countryList.indexOf(currentCountry) < 0)
             {
               if(currentCountry != undefined)

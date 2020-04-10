@@ -182,7 +182,7 @@
       var container = document.getElementById('container');
       var globe = new DAT.Globe(container, function(label) {
         return new THREE.Color([
-          0xd9d9d9, 0x98edce, 0xff57cd, 0xff0000][label]);
+          0xd9d9d9, 0xbcf7e2, 0xff57cd, 0xff0000][label]);
       });
 
       window.globe = globe;
@@ -467,7 +467,11 @@
           for(let i = 0; i < confirmed.length; i++)
           {
             let tmpConfirmed = Math.abs(confirmed[i][currentDate]);
-            let currentCountry = confirmed[i][1].replace('*', '').replace('\"', '');
+            let currentCountry = undefined;
+            if(confirmed[i][1] != undefined)
+            {
+               currentCountry = confirmed[i][1].replace('*', '').replace('\"', '');
+            }
             if(countryList.indexOf(currentCountry) < 0)
             {
               if(currentCountry != undefined)
