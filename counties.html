@@ -1,7 +1,15 @@
 <!DOCTYPE HTML>
 <html lang="en">
   <head>
-    <title>Coronavirus Global Map</title>
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-NVX45K7');</script>
+    <!-- End Google Tag Manager -->
+
+    <title>3D Covid</title>
     <meta charset="utf-8">
     <style type="text/css">
       html {
@@ -32,9 +40,7 @@
 
       #currentInfo {
         width: 270px;
-        position: absolute;
-        left: 20px;
-        top: 63px;
+        position: relative;
 
         background-color: rgba(0,0,0,0.2);
 
@@ -56,7 +62,7 @@
       }
 
       #title {
-        position: absolute;
+        position: relative;
         top: 20px;
         width: 270px;
         left: 20px;
@@ -64,6 +70,7 @@
         border-radius: 3px;
         font: 20px Georgia;
         padding: 10px;
+        padding-bottom:20px;
       }
 
       #totals {
@@ -120,6 +127,10 @@
     </style>
   </head>
   <body>
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NVX45K7"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
 
   <div id="container"></div>
 
@@ -127,12 +138,14 @@
     <strong><a href="http://www.chromeexperiments.com/globe">WebGL Globe</a></strong><span class="bull">&bull;</span> Data acquired from <a href="https://coronavirus.jhu.edu/">JHU</a>
   </div>
 
-  <div id="currentInfo">
-    <span id="playButton" class="play" onclick="startTimer(this)">Play ►</span>
-  </div>
 
   <div id="title">
-    Coronavirus Global Map
+    3D Covid
+    <p id="blurb" style="color: #aaa; font-size:12px">3DCOVID is a 3D interactive simulation of total COVID-19 cases over time. You can play the simulation below, and use the slider to control which day to look at. Pan and zoom by pressing the mouse and using the scroll. On the bottom right, you can check "counties" for higher resolution data of the US. </p>
+  </div>
+
+   <div id="currentInfo">
+    <span id="playButton" class="play" onclick="startTimer(this)">Play ►</span>
   </div>
 
   <div id="totals">
