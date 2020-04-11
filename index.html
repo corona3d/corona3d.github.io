@@ -219,6 +219,13 @@
         playBtn.innerText = 'Stop ■';
 
         var currTime = 0;
+
+        var slider = document.getElementById('daySlider');
+        if(slider.value != slider.max)
+        {
+          currTime = Number(slider.value);
+        }
+
         clearInterval(window.timer);
 
         window.timer = setInterval(function() {
