@@ -113,18 +113,34 @@
         color: #fff;
       }
 
-      #ce span {
-        display: none;
+      .slider {
+        -webkit-appearance: none;
+        width: 100%;
+        height: 15px;
+        border-radius: 5px;  
+        background: #262626;
+        outline: none;
+        opacity: 0.7;
+        -webkit-transition: .2s;
+        transition: opacity .2s;
       }
 
-      #ce {
-        width: 107px;
-        height: 55px;
-        display: block;
-        position: absolute;
-        bottom: 15px;
-        left: 20px;
-        background: url(ce.png);
+      .slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 25px;
+        height: 25px;
+        border-radius: 50%; 
+        background: #abffe1;
+        cursor: pointer;
+      }
+
+      .slider::-moz-range-thumb {
+        width: 25px;
+        height: 25px;
+        border-radius: 50%;
+        background: #abffe1;
+        cursor: pointer;
       }
 
 
@@ -148,7 +164,7 @@
     <p id="blurb" style="color: #aaa; font-size:12px">3DCOVID is a 3D interactive simulation of total COVID-19 cases over time. You can play the simulation below, and use the slider to control which day to look at. Pan and zoom by pressing the mouse and using the scroll. On the bottom right, you can check "counties" for higher resolution data of the US. </p>
   </div>
 
-   <div id="currentInfo">
+   <div id="currentInfo" style="text-align: center;">
     <span id="playButton" class="play" onclick="startTimer(this)">Play ►</span>
   </div>
 
@@ -348,6 +364,7 @@
                                 daySlider.max = formattedData.length-1;
                                 daySlider.step = '1';
                                 daySlider.value = formattedData.length-1;
+                                daySlider.className = "slider";
                                 daySlider.addEventListener('input', function() {
                                   document.getElementById('currentDay').innerText = window.dates[Number(this.value)];
                                   settime(globe, Number(this.value))();
