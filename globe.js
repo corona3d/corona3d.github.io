@@ -155,6 +155,7 @@ DAT.Globe = function(container, colorFn) {
     container.appendChild(renderer.domElement);
 
     container.addEventListener('mousedown', onMouseDown, false);
+
     container.addEventListener('touchstart', onTouchDown, false);
 
     container.addEventListener('mousewheel', onMouseWheel, false);
@@ -348,7 +349,49 @@ DAT.Globe = function(container, colorFn) {
     container.style.cursor = 'move';
   }
 
+  var prevDiff = -1;
+  var mobileZoomFactor = 30;
 
+  function onTouchMove(event) {
+    if(event.touches.length == 2 && event.targetTouches.length == 2)
+    {
+      let p1x = event.touches[0].clientX;
+      let p2x = event.touches[1].clientX;
+
+      let currDiff = Math.abs(p1x - p2x);
+      if(currDiff > prevDiff)
+      {
+        zoom(mobileZoomFactor * 0.3);
+      }
+      
+      if(currDiff < prevDiff)
+      {
+        zoom(-mobileZoomFactor * 0.3);
+      }
+
+      prevDiff = currDiff;
+    }
+    else{
+      mouse.x = - event.touches[0].clientX;
+      mouse.y = event.touches[0].clientY;
+
+      var zoomDamp = distance/1000;
+
+      target.x = targetOnDown.x + (mouse.x - mouseOnDown.x) * 0.005 * zoomDamp;
+      target.y = targetOnDown.y + (mouse.y - mouseOnDown.y) * 0.005 * zoomDamp;
+
+      target.y = target.y > PI_HALF ? PI_HALF : target.y;
+      target.y = target.y < - PI_HALF ? - PI_HALF : target.y;
+    }
+
+    
+  }
+
+  function onTouchEnd(event) {
+    container.removeEventListener('touchmove', onTouchMove, false);
+    container.removeEventListener('touchend', onTouchEnd, false);
+    container.style.cursor = 'auto';
+  }
 
   function onMouseMove(event) {
     mouse.x = - event.clientX;
@@ -364,33 +407,10 @@ DAT.Globe = function(container, colorFn) {
     // console.log(target)
   }
 
-  function onTouchMove(event) {
-    mouse.x = - event.touches[0].clientX;
-    mouse.y = event.touches[0].clientY;
-
-    // console.log(event)
-
-    var zoomDamp = distance/1000;
-
-    target.x = targetOnDown.x + (mouse.x - mouseOnDown.x) * 0.005 * zoomDamp;
-    target.y = targetOnDown.y + (mouse.y - mouseOnDown.y) * 0.005 * zoomDamp;
-
-    target.y = target.y > PI_HALF ? PI_HALF : target.y;
-    target.y = target.y < - PI_HALF ? - PI_HALF : target.y;
-  }
-
- 
-
   function onMouseUp(event) {
     container.removeEventListener('mousemove', onMouseMove, false);
     container.removeEventListener('mouseup', onMouseUp, false);
     container.removeEventListener('mouseout', onMouseOut, false);
-    container.style.cursor = 'auto';
-  }
-
-  function onTouchEnd(event) {
-    container.removeEventListener('touchmove', onTouchMove, false);
-    container.removeEventListener('touchend', onTouchEnd, false);
     container.style.cursor = 'auto';
   }
 
@@ -403,6 +423,7 @@ DAT.Globe = function(container, colorFn) {
   function onMouseWheel(event) {
     event.preventDefault();
     if (overRenderer) {
+      console.log(event.wheelDeltaY)
       zoom(event.wheelDeltaY * 0.3);
     }
     return false;
