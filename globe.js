@@ -87,7 +87,7 @@ DAT.Globe = function(container, colorFn) {
 
   // console.log(target)
 
-  var distance = 100000, distanceTarget = 100000;
+  var distance = 100000, distanceTarget = 1500;
   var padding = 40;
   var PI_HALF = Math.PI / 2;
 
@@ -451,7 +451,7 @@ DAT.Globe = function(container, colorFn) {
 
   function zoom(delta) {
     distanceTarget -= delta;
-    distanceTarget = distanceTarget > 1500 ? 1500 : distanceTarget; // > num == zoom max
+    distanceTarget = distanceTarget > 3000 ? 3000 : distanceTarget; // > num == zoom max
     distanceTarget = distanceTarget < 350 ? 350 : distanceTarget; // < num == zoom min
   }
 
