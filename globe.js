@@ -350,7 +350,7 @@ DAT.Globe = function(container, colorFn) {
   }
 
   var prevDiff = -1;
-  var mobileZoomFactor = 30;
+  var mobileZoomFactor = 90;
 
   function onTouchMove(event) {
     if(event.touches.length == 2 && event.targetTouches.length == 2)
