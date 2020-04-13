@@ -55,17 +55,10 @@ if(!Detector.webgl){
             document.getElementById('deathData').innerText = `Deaths: ${totalsPerDate[dates[currTime]].deaths.toLocaleString()}`;
 
             // top countries
-            document.getElementById('country1').innerText = `(1) ${topCountriesPerDate[dates[currTime]][0][0]}: ${topCountriesPerDate[dates[currTime]][0][1].confirmed.toLocaleString()}`;
-            document.getElementById('country2').innerText = `(2) ${topCountriesPerDate[dates[currTime]][1][0]}: ${topCountriesPerDate[dates[currTime]][1][1].confirmed.toLocaleString()}`;
-            document.getElementById('country3').innerText = `(3) ${topCountriesPerDate[dates[currTime]][2][0]}: ${topCountriesPerDate[dates[currTime]][2][1].confirmed.toLocaleString()}`;
-            document.getElementById('country4').innerText = `(4) ${topCountriesPerDate[dates[currTime]][3][0]}: ${topCountriesPerDate[dates[currTime]][3][1].confirmed.toLocaleString()}`;
-            document.getElementById('country5').innerText = `(5) ${topCountriesPerDate[dates[currTime]][4][0]}: ${topCountriesPerDate[dates[currTime]][4][1].confirmed.toLocaleString()}`;
-            document.getElementById('country6').innerText = `(6) ${topCountriesPerDate[dates[currTime]][5][0]}: ${topCountriesPerDate[dates[currTime]][5][1].confirmed.toLocaleString()}`;
-            document.getElementById('country7').innerText = `(7) ${topCountriesPerDate[dates[currTime]][6][0]}: ${topCountriesPerDate[dates[currTime]][6][1].confirmed.toLocaleString()}`;
-            document.getElementById('country8').innerText = `(8) ${topCountriesPerDate[dates[currTime]][7][0]}: ${topCountriesPerDate[dates[currTime]][7][1].confirmed.toLocaleString()}`;
-            document.getElementById('country9').innerText = `(9) ${topCountriesPerDate[dates[currTime]][8][0]}: ${topCountriesPerDate[dates[currTime]][8][1].confirmed.toLocaleString()}`;
-            document.getElementById('country10').innerText = `(10) ${topCountriesPerDate[dates[currTime]][9][0]}: ${topCountriesPerDate[dates[currTime]][9][1].confirmed.toLocaleString()}`;
-
+            for(let i = 0; i < 10; i++)
+            {
+                document.getElementById('country'+(i+1)).innerText = `(${(i+1)}) ${topCountriesPerDate[window.dates[currTime]][i][0]}: ${topCountriesPerDate[window.dates[currTime]][i][1].confirmed.toLocaleString()}`;
+            }
             settime(globe, currTime)();
             currTime++;
         }, msDelay);

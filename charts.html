@@ -17,7 +17,50 @@
     <meta name="keywords" content="Corona, Coronavirus, corona, coronavirus, covid, covid-19, statistics, corona data">
     <meta name="author" content="Berelium">
     <style type="text/css">
-     
+  
+      body {
+        background: #000000;
+      }
+
+      canvas#globalData {
+        background-color: #1d1d1d;
+      }
+
+      .linechart {
+        border-radius: 15px;
+        border: outset;
+        border-color: #aaa;
+      }
+
+      .slider {
+        -webkit-appearance: none;
+        width: 100%;
+        height: 15px;
+        border-radius: 5px;  
+        background: #262626;
+        outline: none;
+        opacity: 0.7;
+        -webkit-transition: .2s;
+        transition: opacity .2s;
+      }
+
+      .slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 25px;
+        height: 25px;
+        border-radius: 50%; 
+        background: #abffe1;
+        cursor: pointer;
+      }
+
+      .slider::-moz-range-thumb {
+        width: 25px;
+        height: 25px;
+        border-radius: 50%;
+        background: #abffe1;
+        cursor: pointer;
+      }
 
     </style>
   </head>
@@ -29,11 +72,12 @@
     
     <div id="container">
       <div style="width: 45%; float: left;">
-          <canvas id="globalData" class="chartjs" width="770" height="385"></canvas>
+          <canvas id="globalData" class="linechart" width="770" height="385"></canvas>
       </div>
       <div style="width: 45%; float: left;">
         <canvas id="globalPie" class="chartjs" width="770" height="385"></canvas>
       </div>
+      <div id="opt" style="text-align: center; width: 10%; float: right;"></div>
     </div>
     
 
@@ -43,6 +87,22 @@
     <script type="text/javascript">
         const IS_COUNTY = true;
         const IS_CHART = true;
+
+        function createColorPalette(value) {
+          let colors = [];
+          var v = 255/value;
+          for( var rStep = 0, r = 0; rStep < v; rStep++) {    
+              for( var gStep = 0, g = 0; gStep < v; gStep++ ) {       
+                  for( var bStep = 0, b = 0; bStep < v; bStep++ ) {                                                  
+                      colors.push({r: r, g: g, b: b});
+                      b += value;
+                  }
+                  g += value;
+              }
+              r += value;
+          }
+          return colors;
+      }
 
         window.totalsPerDate = {};
         window.topCountriesPerDate = {};
@@ -67,6 +127,10 @@
             deathPoints.push(allData[i].deaths);
           }
 
+
+          var colorPallette = [];
+
+
           let countryKeys = Object.keys(topCountriesPerDate);
           let lastCountryDay = topCountriesPerDate[countryKeys[countryKeys.length-1]];
           let countryNames = []; let countryValues = []; let colorMap = {};
@@ -84,20 +148,24 @@
             countryColors.push(colorMap[countryNames[i]]);
           }
 
+          // ================== Draw Charts ==================
           var myPieChart = new Chart(globalPie, {
-            "type": "doughnut",
-            "data": {
-              "labels": countryNames,
-              "datasets": [{
-                "label": "My First Dataset",
-                "data": countryValues,
-                "backgroundColor": countryColors
+            type: "doughnut",
+            data: {
+              labels: countryNames,
+              datasets: [{
+                label: "My First Dataset",
+                data: countryValues,
+                backgroundColor: countryColors,
+                borderColor: "#1d1d1d",
+                borderWidth: 0.35
               }]
             },
-            "options": {
+            options: {
               title: {
                 display: true,
-                text: 'Covid-19 Country Data'
+                text: 'Covid-19 Country Data',
+                fontColor: '#aaa'
               },
               legend: {
                 display: false
@@ -113,21 +181,21 @@
                 "label": "Confirmed Data",
                 "data": confirmedPoints,
                 "fill": false,
-                "borderColor": "#aaa",
+                "borderColor": "#d9d9d9",
                 "lineTension": 0.1
               },
               {
                 "label": "Active Data",
                 "data": activePoints,
                 "fill": false,
-                "borderColor": "#ffff00",
+                "borderColor": "#f5d72a",
                 "lineTension": 0.1
               },
               {
                 "label": "Death Data",
                 "data": deathPoints,
                 "fill": false,
-                "borderColor": "#ff0000",
+                "borderColor": "#f5422a",
                 "lineTension": 0.1
               }]
             },
@@ -135,19 +203,40 @@
               responsive: true,
               title: {
                 display: true,
-                text: 'Covid-19 Global Data'
+                text: 'Covid-19 Global Data',
+                fontColor: "#aaa"
+              },
+              legend: {
+                labels: {
+                  fontColor: "#aaa"
+                }
               },
               scales: {
                 xAxes: [{
                   display: true,
+                  gridLines: {
+                    display: true,
+                    color: "rgba(255, 255,255,0.1)"
+                  },
+                  ticks: {
+                    fontColor: "#aaa" 
+                  }
                 }],
                 yAxes: [{
                   display: true,
+                  gridLines: {
+                    display: true,
+                    color: "rgba(255, 255,255,0.1)"
+                  },
+                  ticks: {
+                    fontColor: "#aaa" 
+                  }
                 }]
               }
             }
             
           });
+          // ================== Draw Charts ==================
 
           var daySlider = document.createElement('input');
           daySlider.type = 'range';
@@ -191,9 +280,10 @@
           currentDay.style.padding = "10px";
           currentDay.style.fontWeight = "bold";
           currentDay.style.fontSize = "15px";
+          currentDay.style.color = "#d9d9d9";
 
-          document.getElementById('container').appendChild(daySlider);
-          document.getElementById('container').appendChild(currentDay);
+          document.getElementById('opt').appendChild(daySlider);
+          document.getElementById('opt').appendChild(currentDay);
         }
     </script>
 
