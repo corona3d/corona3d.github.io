@@ -69,13 +69,19 @@
 
           let countryKeys = Object.keys(topCountriesPerDate);
           let lastCountryDay = topCountriesPerDate[countryKeys[countryKeys.length-1]];
-          let countryNames = []; let countryValues = []; let countryColors = [];
+          let countryNames = []; let countryValues = []; let colorMap = {};
           for(let i = 0; i < lastCountryDay.length; i++)
           {
             countryNames.push(lastCountryDay[i][0])
             countryValues.push(lastCountryDay[i][1].confirmed)
             var randomColor = '#'+Math.floor(Math.random()*16777215).toString(16);
-            countryColors.push(randomColor);
+            colorMap[lastCountryDay[i][0]] = randomColor;
+          }
+
+          let countryColors = [];
+          for(let i = 0; i < countryNames.length; i++)
+          {
+            countryColors.push(colorMap[countryNames[i]]);
           }
 
           var myPieChart = new Chart(globalPie, {
@@ -151,10 +157,11 @@
           daySlider.step = '1';
           daySlider.value =  Object.keys(topCountriesPerDate).length-1;
           daySlider.className = "slider";
-          daySlider.addEventListener('input', function() {
+          daySlider.addEventListener('input', function() 
+          {
             let countryKeys = Object.keys(topCountriesPerDate);
             let currDay = topCountriesPerDate[countryKeys[Number(this.value)]];
-            console.log(countryKeys[Number(this.value)])
+
             let countryNames = []; let countryValues = [];
             for(let i = 0; i < currDay.length; i++)
             {
@@ -162,10 +169,17 @@
               countryValues.push(currDay[i][1].confirmed)
             }
 
+            let countryColors = [];
+            for(let i = 0; i < countryNames.length; i++)
+            {
+              countryColors.push(colorMap[countryNames[i]]);
+            }
+
             document.getElementById('currentDay').innerText = window.dates[Number(this.value)];
 
             myPieChart.data.labels = countryNames;
             myPieChart.data.datasets[0].data = countryValues;
+            myPieChart.data.datasets[0].backgroundColor = countryColors;
             myPieChart.update();
 
 
