@@ -48,6 +48,7 @@ if(!Detector.webgl){
                 return;
             }
             document.getElementById('currentDay').innerText = dates[currTime];
+            document.getElementById('currentDay2').innerText = '('+dates[currTime]+')';
 
             document.getElementById('daySlider').value = currTime;
             document.getElementById('confirmedData').innerText = `Confirmed: ${totalsPerDate[dates[currTime]].confirmed.toLocaleString()}`;
@@ -124,6 +125,7 @@ if(!Detector.webgl){
         daySlider.className = "slider";
         daySlider.addEventListener('input', function() {
             document.getElementById('currentDay').innerText = window.dates[Number(this.value)];
+            document.getElementById('currentDay2').innerText = '('+window.dates[Number(this.value)]+')';
 
             settime(globe, Number(this.value))();
 
@@ -145,6 +147,16 @@ if(!Detector.webgl){
         currentDay.style.fontWeight = "bold";
         currentDay.style.fontSize = "15px";
         currentInfo.appendChild(currentDay);
+
+        var topcountriesdiv = document.getElementById('topcountries');
+        var currentDay2 = document.createElement('span');
+        currentDay2.id = 'currentDay2';
+        currentDay2.innerText = '('+ dateList[formattedData.length-1] +')';
+        currentDay2.style.padding = "10px";
+        currentDay2.style.fontWeight = "bold";
+        currentDay2.style.fontSize = "15px";
+        topcountriesdiv.insertBefore(currentDay2, topcountriesdiv.firstChild);
+
 
         // console.time('animate');
         globe.createPoints();
