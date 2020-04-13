@@ -165,13 +165,25 @@
   <div id="title">
     3D Covid
     <p id="blurb" style="color: #aaa; font-size:12px">3DCOVID is a 3D interactive simulation of total COVID-19 cases over time. You can play the simulation below, and use the slider to control which day to look at. Pan and zoom by pressing the mouse and using the scroll. On the bottom right, you can check "counties" for higher resolution data of the US. </p>
+    <div id="legend" style="height: 50px; line-height: 10px;">
+      <div id="item1">
+        <div name="box1" style="width: 10px; height: 10px; background:#d9d9d9; float:left"></div> 
+        <div style="float: left; padding-left: 5px"> Country </div>
+      </div><br><br>
+      <div id="item2" style="padding-top: 5px;">
+        <div name="box1" style="width: 10px; height: 10px; background:#abffe1; float:left;"></div> 
+        <div style="float: left; padding-left: 5px"> State/County </div>
+      </div>
+      
+    </div>
   </div>
 
    <div id="currentInfo" style="text-align: center;">
     <span id="playButton" class="play" onclick="startTimer(this)">Play ►</span>
   </div>
 
-  <div id="totals">
+  
+  <div id="totals">  
     <p id="confirmedData">Confirmed: 0</p>
     <p id="activeData" style="color: yellow;">Active: 0</p>
     <p id="deathData" style="color: red;">Deaths: 0</p>
