@@ -1,0 +1,188 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-163329989-1"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-163329989-1');
+    </script>
+
+    <title>3D Covid</title>
+    <meta charset="UTF-8">
+    <meta name="description" content="3D Covid-19 Map">
+    <meta name="keywords" content="Corona, Coronavirus, corona, coronavirus, covid, covid-19, statistics, corona data">
+    <meta name="author" content="Berelium">
+    <style type="text/css">
+     
+
+    </style>
+  </head>
+  <body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NVX45K7"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+    
+    <div id="container">
+      <div style="width: 45%; float: left;">
+          <canvas id="globalData" class="chartjs" width="770" height="385"></canvas>
+      </div>
+      <div style="width: 45%; float: left;">
+        <canvas id="globalPie" class="chartjs" width="770" height="385"></canvas>
+      </div>
+    </div>
+    
+
+    <script type="text/javascript" src="Chart.min.js"></script>
+
+    <script type="text/javascript" src="getdata.js"></script>
+    <script type="text/javascript">
+        const IS_COUNTY = true;
+        const IS_CHART = true;
+
+        window.totalsPerDate = {};
+        window.topCountriesPerDate = {};
+
+        getGlobalData(parseData);
+
+        function parseData(data)
+        {
+          var globalData = document.getElementById('globalData');
+          var globalPie = document.getElementById('globalPie');
+          
+          window.dates = Object.keys(totalsPerDate);
+          let allData = Object.values(totalsPerDate);
+          let confirmedPoints = [];
+          let activePoints = [];
+          let deathPoints = [];
+
+          for(let i = 0; i < allData.length; i++)
+          {
+            confirmedPoints.push(allData[i].confirmed);
+            activePoints.push(allData[i].active);
+            deathPoints.push(allData[i].deaths);
+          }
+
+          let countryKeys = Object.keys(topCountriesPerDate);
+          let lastCountryDay = topCountriesPerDate[countryKeys[countryKeys.length-1]];
+          let countryNames = []; let countryValues = []; let countryColors = [];
+          for(let i = 0; i < lastCountryDay.length; i++)
+          {
+            countryNames.push(lastCountryDay[i][0])
+            countryValues.push(lastCountryDay[i][1].confirmed)
+            var randomColor = '#'+Math.floor(Math.random()*16777215).toString(16);
+            countryColors.push(randomColor);
+          }
+
+          var myPieChart = new Chart(globalPie, {
+            "type": "doughnut",
+            "data": {
+              "labels": countryNames,
+              "datasets": [{
+                "label": "My First Dataset",
+                "data": countryValues,
+                "backgroundColor": countryColors
+              }]
+            },
+            "options": {
+              title: {
+                display: true,
+                text: 'Covid-19 Country Data'
+              },
+              legend: {
+                display: false
+              }
+            }
+          });
+
+          var myLineChart = new Chart(globalData, {
+            "type": "line",
+            "data": {
+              "labels": Object.keys(totalsPerDate),
+              "datasets": [{
+                "label": "Confirmed Data",
+                "data": confirmedPoints,
+                "fill": false,
+                "borderColor": "#aaa",
+                "lineTension": 0.1
+              },
+              {
+                "label": "Active Data",
+                "data": activePoints,
+                "fill": false,
+                "borderColor": "#ffff00",
+                "lineTension": 0.1
+              },
+              {
+                "label": "Death Data",
+                "data": deathPoints,
+                "fill": false,
+                "borderColor": "#ff0000",
+                "lineTension": 0.1
+              }]
+            },
+            "options": {
+              responsive: true,
+              title: {
+                display: true,
+                text: 'Covid-19 Global Data'
+              },
+              scales: {
+                xAxes: [{
+                  display: true,
+                }],
+                yAxes: [{
+                  display: true,
+                }]
+              }
+            }
+            
+          });
+
+          var daySlider = document.createElement('input');
+          daySlider.type = 'range';
+          daySlider.id = 'daySlider';
+          daySlider.min = '0';
+          daySlider.max =  Object.keys(topCountriesPerDate).length-1;
+          daySlider.step = '1';
+          daySlider.value =  Object.keys(topCountriesPerDate).length-1;
+          daySlider.className = "slider";
+          daySlider.addEventListener('input', function() {
+            let countryKeys = Object.keys(topCountriesPerDate);
+            let currDay = topCountriesPerDate[countryKeys[Number(this.value)]];
+            console.log(countryKeys[Number(this.value)])
+            let countryNames = []; let countryValues = [];
+            for(let i = 0; i < currDay.length; i++)
+            {
+              countryNames.push(currDay[i][0])
+              countryValues.push(currDay[i][1].confirmed)
+            }
+
+            document.getElementById('currentDay').innerText = window.dates[Number(this.value)];
+
+            myPieChart.data.labels = countryNames;
+            myPieChart.data.datasets[0].data = countryValues;
+            myPieChart.update();
+
+
+          });
+
+          var currentDay = document.createElement('span');
+          currentDay.id = 'currentDay';
+          currentDay.innerText = window.dates[window.dates.length-1];
+          currentDay.style.padding = "10px";
+          currentDay.style.fontWeight = "bold";
+          currentDay.style.fontSize = "15px";
+
+          document.getElementById('container').appendChild(daySlider);
+          document.getElementById('container').appendChild(currentDay);
+        }
+    </script>
+
+  </body>
+
+</html>
