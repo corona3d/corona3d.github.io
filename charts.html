@@ -64,7 +64,7 @@
 
     </style>
   </head>
-  <body>
+  <body onload="getLocation()">
     <!-- Google Tag Manager (noscript) -->
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NVX45K7"
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -108,6 +108,28 @@
         window.topCountriesPerDate = {};
 
         getGlobalData(parseData);
+        
+        function getLocation()
+        {
+          var options = {
+            enableHighAccuracy: true,
+            timeout: 5000,
+            maximumAge: 0
+          };
+
+          function success(pos) {
+            var crd = pos.coords;
+
+            window.myLatitude = crd.latitude;
+            window.myLongitude = crd.longitude;
+          }
+
+          function error(err) {
+            console.warn(`ERROR(${err.code}): ${err.message}`);
+          }
+
+          navigator.geolocation.getCurrentPosition(success, error, options);
+        }
 
         function parseData(data)
         {
@@ -120,16 +142,13 @@
           let activePoints = [];
           let deathPoints = [];
 
+
           for(let i = 0; i < allData.length; i++)
           {
             confirmedPoints.push(allData[i].confirmed);
             activePoints.push(allData[i].active);
             deathPoints.push(allData[i].deaths);
           }
-
-
-          var colorPallette = [];
-
 
           let countryKeys = Object.keys(topCountriesPerDate);
           let lastCountryDay = topCountriesPerDate[countryKeys[countryKeys.length-1]];
@@ -173,29 +192,27 @@
             }
           });
 
+          let geoData = findClosestCounty(data, window.dates.length-1);
+          console.log(geoData);
+
+          let locationLabel = `${geoData[1][0].county}, ${geoData[1][0].state}`;
+
+          let dataPoints = [];
+          for(let i = 0; i < geoData[1].length; i++)
+          {
+            dataPoints.push(geoData[1][i].confirmed);
+          }
+          
+
           var myLineChart = new Chart(globalData, {
             "type": "line",
             "data": {
-              "labels": Object.keys(totalsPerDate),
+              "labels": geoData[0],
               "datasets": [{
-                "label": "Confirmed Data",
-                "data": confirmedPoints,
+                "label": "Confirmed Cases",
+                "data": dataPoints,
                 "fill": false,
                 "borderColor": "#d9d9d9",
-                "lineTension": 0.1
-              },
-              {
-                "label": "Active Data",
-                "data": activePoints,
-                "fill": false,
-                "borderColor": "#f5d72a",
-                "lineTension": 0.1
-              },
-              {
-                "label": "Death Data",
-                "data": deathPoints,
-                "fill": false,
-                "borderColor": "#f5422a",
                 "lineTension": 0.1
               }]
             },
@@ -203,7 +220,7 @@
               responsive: true,
               title: {
                 display: true,
-                text: 'Covid-19 Global Data',
+                text: locationLabel,
                 fontColor: "#aaa"
               },
               legend: {
@@ -236,6 +253,7 @@
             }
             
           });
+          
           // ================== Draw Charts ==================
 
           var daySlider = document.createElement('input');
@@ -284,6 +302,44 @@
 
           document.getElementById('opt').appendChild(daySlider);
           document.getElementById('opt').appendChild(currentDay);
+        }
+
+        function findClosestCounty(data)
+        {
+          let chunk = [];
+          let countyArr = [];
+          let dateArr = [];
+          for(let j = 0; j < data.length; j++)
+          {
+            let usaData = data[j][2];
+            let latDiff = 9999999999999;
+            let lngDiff = 9999999999999;
+            let candidate = null;
+            for(let i = 0; i < usaData.length; i++)
+            {
+              if(usaData[i].latitude != undefined)
+              {
+                let tmpLtDiff = Math.abs(myLatitude - usaData[i].latitude);
+                let tmpLnDiff = Math.abs(myLongitude - usaData[i].longitude);
+                if(i % 10 == 0)
+                {
+                  // console.log(tmpLnDiff, tmpLnDiff)
+                }
+                if(tmpLtDiff < latDiff && tmpLnDiff < lngDiff)
+                {
+                  latDiff = tmpLtDiff;
+                  lngDiff = tmpLnDiff;
+                  candidate = usaData[i];
+                }
+              }
+            }
+            countyArr.push(candidate);
+            dateArr.push(data[j][0])
+          }
+          chunk.push(dateArr);
+          chunk.push(countyArr);
+          
+          return chunk;
         }
     </script>
 

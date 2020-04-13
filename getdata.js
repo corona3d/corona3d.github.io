@@ -118,8 +118,8 @@ function structureData(confirmed, deaths, recovered, focusedConfirmed) {
 
     // console.log(headers)
     // console.log(focusedHeaders)
+    // console.log(focusedConfirmed);
 
-    // console.log(confirmed)
 
     for (let currentDate = 4; currentDate < headers.length; currentDate++) {
         let tmpDateArr = [];
@@ -136,10 +136,6 @@ function structureData(confirmed, deaths, recovered, focusedConfirmed) {
         window.totalsPerDate[headers[currentDate]].deaths = 0;
         window.totalsPerDate[headers[currentDate]].recovered = 0;
         window.totalsPerDate[headers[currentDate]].active = 0;
-
-        // console.log(confirmed)
-
-        let shift = 2;
 
         for (let i = 0; i < confirmed.length; i++) {
             let tmpConfirmed = Math.abs(confirmed[i][currentDate]);
@@ -168,7 +164,8 @@ function structureData(confirmed, deaths, recovered, focusedConfirmed) {
                 dataArr.push(0);
             } else {
                 let tmpObject = {"state": confirmed[i][0], "country": currentCountry, "confirmed": tmpConfirmed};
-                dataArr.push(tmpObject);    
+                dataArr.push(tmpObject);   
+                
             }   
 
 
@@ -502,6 +499,34 @@ function structureData(confirmed, deaths, recovered, focusedConfirmed) {
                 let tmpBarHeight = Math.sqrt(tmpConfirmed) * BAR_SHIFT;
                 megaData[i][1][j] = tmpBarHeight;
             }
+        }
+    }
+    else
+    {
+        for (let focusedDate = 11; focusedDate < focusedHeaders.length; focusedDate++) {
+            let megaIndex = 0;
+
+            for (let i = 0; i < megaData.length; i++) {
+                if (focusedHeaders[focusedDate] == megaData[i][0]) {
+                    megaIndex = i;
+                    break;
+                }
+            }
+
+            let tmpFocused = [];
+            for (let i = 0; i < focusedConfirmed.length; i++) {
+                let tmpConfirmed = checkIfNum(focusedConfirmed[i][focusedDate]) ? Math.abs(focusedConfirmed[i][focusedDate]) : 0;
+                let tmpCounty = focusedConfirmed[i][5];
+                let tmpState = focusedConfirmed[i][6];
+                let tmpLatitude = focusedConfirmed[i][8];
+                let tmpLongitude = focusedConfirmed[i][9];
+
+                let tmpObject = {state: tmpState, county: tmpCounty, latitude: tmpLatitude, longitude: tmpLongitude, confirmed: tmpConfirmed};
+                tmpFocused.push(tmpObject);
+            
+            }
+
+            megaData[megaIndex].push(tmpFocused);
         }
     }
 
