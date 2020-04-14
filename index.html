@@ -169,17 +169,20 @@
   <div id="title" style='padding-bottom: 40px; '>
     3D Covid
     <p id="blurb" style="color: #aaa; font-size:12px; line-height: 18px; background-color: rgba(26,26,26,0.5); border-radius: 10px; padding: 5px">Corona3D is a 3D interactive simulation of total COVID-19 cases over time. You can play the simulation below, and use the slider to control which day to look at. Pan and zoom by pressing the mouse and using the scroll. On the bottom right, you can check "counties" for higher resolution data of the US. </p>
+    <label for="counties" style="font-size: 15px;">Display Counties (USA):</label>
+    <input name="counties" type="checkbox" oninput="toggleCounties(this)">
     <div id="legend" style="height: 50px; line-height: 10px;">
       <div id="item1" style="margin: 20px 0px">
-        <div name="box1" style="width: 10px; height: 10px; background:#d9d9d9; float:left;margin-right: 10px;"></div> 
-        <div style="float: left; padding-left: 5px"> Country </div>
+        <div name="box1" style="width: 10px; height: 10px; background:#d9d9d9; float:left;margin-right: 10px; border-radius: 15px"></div> 
+        <div style="float: left; padding-left: 5px; font-size: 15px"> Country </div>
       </div><br><br>
       <div id="item2" style="padding-top: 5px; margin: 10px 0px">
-        <div name="box1" style="width: 10px; height: 10px; background:#abffe1; float:left; margin-right: 10px;"></div> 
-        <div style="float: left; padding-left: 5px"> State/County </div>
+        <div name="box1" style="width: 10px; height: 10px; background:#abffe1; float:left; margin-right: 10px; border-radius: 15px"></div> 
+        <div style="float: left; padding-left: 5px; font-size: 15px"> State/County </div>
       </div>
       
     </div>
+    
   </div>
 
    <div id="currentInfo" style="text-align: center;">
@@ -206,11 +209,6 @@
     <p id="country8"></p>
     <p id="country9"></p>
     <p id="country10"></p>
-  </div>
-
-  <div id="settings">
-    <label for="counties" style="font-size: 15px;">Display Counties (USA):</label>
-    <input name="counties" type="checkbox" oninput="toggleCounties(this)">
   </div>
 
   <script type="text/javascript" src="third-party/Detector.js"></script>
