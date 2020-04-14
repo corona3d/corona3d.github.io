@@ -19,6 +19,9 @@
     <meta name="keywords" content="Corona, Coronavirus, corona, coronavirus, covid, covid-19, statistics, corona data">
     <meta name="author" content="Berelium">
     <style type="text/css">
+
+      @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
       html {
         height: 100%;
       }
@@ -27,7 +30,7 @@
         padding: 0;
         background: #000000 url(loading.gif) center center no-repeat;
         color: #ffffff;
-        font-family: sans-serif;
+        font-family: Roboto;
         font-size: 13px;
         line-height: 20px;
         height: 100%;
@@ -75,7 +78,7 @@
         left: 20px;
         background-color: rgba(0,0,0,0.2);
         border-radius: 3px;
-        font: 20px Georgia;
+        font: 20px Roboto;
         padding: 10px;
         padding-bottom:20px;
       }
@@ -162,16 +165,16 @@
   </div>
 
   
-  <div id="title">
+  <div id="title" style='padding-bottom: 40px'>
     3D Covid
-    <p id="blurb" style="color: #aaa; font-size:12px">3DCOVID is a 3D interactive simulation of total COVID-19 cases over time. You can play the simulation below, and use the slider to control which day to look at. Pan and zoom by pressing the mouse and using the scroll. On the bottom right, you can check "counties" for higher resolution data of the US. </p>
+    <p id="blurb" style="color: #aaa; font-size:12px; line-height: 18px">3DCOVID is a 3D interactive simulation of total COVID-19 cases over time. You can play the simulation below, and use the slider to control which day to look at. Pan and zoom by pressing the mouse and using the scroll. On the bottom right, you can check "counties" for higher resolution data of the US. </p>
     <div id="legend" style="height: 50px; line-height: 10px;">
-      <div id="item1">
-        <div name="box1" style="width: 10px; height: 10px; background:#d9d9d9; float:left"></div> 
+      <div id="item1" style="margin: 20px 0px">
+        <div name="box1" style="width: 10px; height: 10px; background:#d9d9d9; float:left;margin-right: 10px;"></div> 
         <div style="float: left; padding-left: 5px"> Country </div>
       </div><br><br>
-      <div id="item2" style="padding-top: 5px;">
-        <div name="box1" style="width: 10px; height: 10px; background:#abffe1; float:left;"></div> 
+      <div id="item2" style="padding-top: 5px; margin: 10px 0px">
+        <div name="box1" style="width: 10px; height: 10px; background:#abffe1; float:left; margin-right: 10px;"></div> 
         <div style="float: left; padding-left: 5px"> State/County </div>
       </div>
       
