@@ -68,7 +68,7 @@
 
     </style>
   </head>
-  <body onload="getLocation()">
+  <body>
     <!-- Google Tag Manager (noscript) -->
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NVX45K7"
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -147,11 +147,11 @@
           navigator.geolocation.getCurrentPosition(success, error, options);
         }
 
-        function updateCountyList(select)
+        function populateCounties(state)
         {
           var countySelect = document.getElementById("countySelect");
           countySelect.options.length = 0;
-          let countyList = getCountiesList(select.value);
+          let countyList = getCountiesList(state);
 
           
           var option = document.createElement("option");
@@ -164,6 +164,11 @@
             option.text = countyList[i];
             countySelect.add(option);
           }
+        }
+
+        function selectState(select)
+        {
+          populateCounties(select.value);
 
           var leData = getState(select.value);
 
@@ -174,6 +179,12 @@
               countyPoints.push(leData[1][i].confirmed);
           }
 
+          mixedChart.options.title.text = select.value
+        
+          mixedChart.data.datasets[1].data = [];
+          mixedChart.data.datasets[0].data = countyPoints;
+          mixedChart.update();
+
           let found = false;
           for(let i = 0; i < leData[1].length; i++)
           {
@@ -181,15 +192,11 @@
               found = true;
 
             if(found)
-              newBarArr.push(countyPoints[countyPoints.length-1]);
+              newBarArr.push(Number(mixedChart.scales["y-axis-0"].ticks[0]));
             else
               newBarArr.push(0);
           }
-
-          mixedChart.options.title.text = select.value
-        
           mixedChart.data.datasets[1].data = newBarArr
-          mixedChart.data.datasets[0].data = countyPoints;
           mixedChart.update();
         }
 
@@ -213,6 +220,15 @@
               countyPoints.push(leData[1][i].confirmed);
           }
 
+          if(countyName != "Whole State")
+            mixedChart.options.title.text = `${countyName}, ${stateName}`
+          else
+            mixedChart.options.title.text = stateName
+          
+          mixedChart.data.datasets[1].data = [];
+          mixedChart.data.datasets[0].data = countyPoints;
+          mixedChart.update();
+
           let found = false;
           for(let i = 0; i < leData[1].length; i++)
           {
@@ -220,19 +236,11 @@
               found = true;
 
             if(found)
-              newBarArr.push(countyPoints[countyPoints.length-1]);
+              newBarArr.push(Number(mixedChart.scales["y-axis-0"].ticks[0]));
             else
               newBarArr.push(0);
           }
-
-
-          if(countyName != "Whole State")
-            mixedChart.options.title.text = `${countyName}, ${stateName}`
-          else
-            mixedChart.options.title.text = stateName
-          
           mixedChart.data.datasets[1].data = newBarArr
-          mixedChart.data.datasets[0].data = countyPoints;
           mixedChart.update();
         }
 
@@ -322,8 +330,13 @@
           //   }
           // });
 
-          let geoData = getCounty('cook', 'illinois');
-          console.log(geoData);
+          var state = document.getElementById('stateSelect');
+          var county = document.getElementById('countySelect')
+          state.value = "New York";
+          populateCounties(state.value);
+          county.value = "New York";
+
+          let geoData = getCounty(state.value, state.value);
           if(geoData == null)
           {
             console.log('rip');
@@ -337,28 +350,6 @@
           let locationLabel = `${geoData[1][0].county}, ${geoData[1][0].state}`;
 
           var kevTest = document.getElementById('kevTest');
-
-          let kevData = [];
-          let found = false;
-          for(let i = 0; i < dataPoints.length-1; i++)
-          {
-            
-            if(geoData[0][i] == "3/29/20")
-            {
-              found = true;
-              
-            }
-
-            if(found)
-            {
-              kevData.push(14000);
-            }
-            else{
-              kevData.push(0);
-            }
-          }
-         
-
           var mixedChart = new Chart(kevTest, {
             "type": "line",
             "data": {
@@ -371,7 +362,7 @@
                 "lineTension": 0.1
               },{
                 label:'Stay at home order',
-                data: kevData,
+                data: [],
                 backgroundColor: "rgba(255,0,0,0.4)",
                 type:'bar'
               
@@ -415,9 +406,23 @@
               }
             }
             
-          });
-         
+          });   
           window.mixedChart = mixedChart;
+
+          let kevData = [];
+          let found = false;
+          for(let i = 0; i < dataPoints.length-1; i++)
+          {
+            if(geoData[0][i] == homeOrderMap["New York"])
+              found = true;
+            
+            if(found)
+              kevData.push(Number(mixedChart.scales["y-axis-0"].ticks[0]));
+            else
+              kevData.push(0);
+          }
+          mixedChart.data.datasets[1].data = kevData
+          mixedChart.update();
 
           /*
           var myLineChart = new Chart(globalData, {

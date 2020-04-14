@@ -158,7 +158,13 @@ DAT.Globe = function(container, colorFn) {
 
     container.addEventListener('touchstart', onTouchDown, false);
 
-    container.addEventListener('mousewheel', onMouseWheel, false);
+    // scroll event controller
+    var mousewheelevt=(/Firefox/i.test(navigator.userAgent))? "DOMMouseScroll" : "mousewheel" //FF doesn't recognize mousewheel as of FF3.x
+
+    if (container.attachEvent) //if IE (and Opera depending on user setting)
+      container.attachEvent("on"+mousewheelevt, onMouseWheel)
+    else if (container.addEventListener) //WC3 browsers
+      container.addEventListener(mousewheelevt, onMouseWheel, false)
 
     document.addEventListener('keydown', onDocumentKeyDown, false);
 
@@ -422,11 +428,23 @@ DAT.Globe = function(container, colorFn) {
 
   function onMouseWheel(event) {
     event.preventDefault();
+    
     if (overRenderer) {
-      console.log(event.wheelDeltaY)
-      zoom(event.wheelDeltaY * 0.3);
+      if(event.wheelDeltaY)
+        zoom(event.wheelDeltaY * 0.3);
+      else {
+        if(event.detail > 0)
+          zoom(-120 * 0.3);
+        else
+          zoom(120 * 0.3);
+      }
     }
     return false;
+  }
+
+  function ffScroll(event)
+  {
+    console.log(event);
   }
 
   function onDocumentKeyDown(event) {
