@@ -151,6 +151,8 @@ DAT.Globe = function(container, colorFn) {
     renderer.setSize(w, h);
 
     renderer.domElement.style.position = 'absolute';
+    renderer.domElement.id = 'globeCanvas';
+    renderer.domElement.style.display = 'none';
 
     container.appendChild(renderer.domElement);
 

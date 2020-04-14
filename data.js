@@ -162,6 +162,7 @@ if(!Detector.webgl){
         globe.createPoints();
         settime(globe,formattedData.length-1)();
         globe.animate();
+        document.getElementById('globeCanvas').style.display = "block";
         document.body.style.backgroundImage = 'none';
         // console.timeEnd('animate');
     }
