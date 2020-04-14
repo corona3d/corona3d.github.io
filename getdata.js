@@ -164,11 +164,8 @@ function structureData(confirmed, deaths, recovered, focusedConfirmed) {
                 dataArr.push(0);
             } else {
                 let tmpObject = {"state": confirmed[i][0], "country": currentCountry, "confirmed": tmpConfirmed};
-                dataArr.push(tmpObject);   
-                
+                dataArr.push(tmpObject);
             }   
-
-
         }
 
         var sortableDay = [];
@@ -184,14 +181,20 @@ function structureData(confirmed, deaths, recovered, focusedConfirmed) {
 
         window.topCountriesPerDate[headers[currentDate]] = sortableDay;
 
-        for (let i = 0; i < deaths.length; i++) {
+        for (let i = 0; i < deaths.length; i++)
+        { 
             let tmpDead = Math.abs(deaths[i][currentDate]);
+            dataArr[i].deaths = tmpDead;
             window.totalsPerDate[headers[currentDate]].deaths += tmpDead ? tmpDead : 0;
         }
         for (let i = 0; i < recovered.length; i++) {
             let tmpRecovered = Math.abs(recovered[i][currentDate]);
+            dataArr[i].recovered = tmpRecovered;
+            dataArr[i].active = dataArr[i].confirmed - dataArr[i].deaths - tmpRecovered;
             window.totalsPerDate[headers[currentDate]].recovered += tmpRecovered ? tmpRecovered : 0;
         }
+
+
         window.totalsPerDate[headers[currentDate]].active += window.totalsPerDate[headers[currentDate]].confirmed - window.totalsPerDate[headers[currentDate]].deaths - window.totalsPerDate[headers[currentDate]].recovered;
 
         tmpDateArr.push(dataArr);

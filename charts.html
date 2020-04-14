@@ -26,6 +26,10 @@
         background-color: #1d1d1d;
       }
 
+      canvas#kevTest {
+        background-color: #1d1d1d;
+      }
+
       .linechart {
         border-radius: 15px;
         border: outset;
@@ -70,14 +74,23 @@
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
     
-    <div id="container">
+    <div id="container" style="height: 450px">
       <div style="width: 45%; float: left;">
-          <canvas id="globalData" class="linechart" width="770" height="385"></canvas>
+          <!-- <canvas id="globalData" class="linechart" width="770" height="385"></canvas> -->
       </div>
+      
       <div style="width: 45%; float: left;">
-        <canvas id="globalPie" class="chartjs" width="770" height="385"></canvas>
+        <canvas id="kevTest" class="linechart" width="770" height="385"></canvas>
       </div>
       <div id="opt" style="text-align: center; width: 10%; float: right;"></div>
+    </div>
+    <div id="selector">
+      <label for="stateSelect" style="color: white">State:</label>
+      <select id="stateSelect" name="stateSelect" onchange='updateCountyList(this)'>
+      </select><br>
+      <label for="countySelect" style="color: white">County:</label>
+      <select id="countySelect" name="countySelect" onchange="selectCounty(this)">
+      </select>
     </div>
     
 
@@ -107,6 +120,9 @@
         window.totalsPerDate = {};
         window.topCountriesPerDate = {};
 
+
+        window.homeOrderMap = {"Alabama":"4/4/20","Alaska":"3/28/20","Arizona":"3/31/20","Arkansas":"null","California":"3/19/20","Colorado":"3/26/20","Connecticut":"3/23/20","Delaware":"3/24/20","District of Columbia":"4/1/20","Florida":"4/3/20","Georgia":"4/3/20","Hawaii":"3/25/20","Idaho":"3/25/20","Illinois":"3/21/20","Indiana":"3/24/20","Iowa":"null","Kansas":"3/30/20","Kentucky":"3/26/20","Louisiana":"3/23/20","Maine":"4/2/20","Maryland":"3/30/20","Massachusetts":"3/24/20","Michigan":"3/24/20","Minnesota":"2/27/20","Mississippi":"4/2/20","Missouri":"4/6/20","Montana":"3/28/20","Nebraska":"null","Nevada":"4/1/20","New Hampshire":"3/27/20","New Jersey":"3/21/20","New Mexico":"3/24/20","New York":"3/22/20","North Carolina":"3/30/20","North Dakota":"null","Ohio":"3/23/20","Oklahoma":"3/25/20","Oregon":"3/23/20","Pennsylvania":"4/1/20","Rhode Island":"3/28/20","South Carolina":"4/7/20","South Dakota":"null","Tennessee":"3/31/20","Texas":"4/2/20","Utah":"3/27/20","Vermont":"3/25/20","Virginia":"3/30/20","Washington":"3/23/20","West Virginia":"3/24/20","Wisconsin":"3/25/20","Wyoming":"3/28/20","Puerto Rico":"3/15/20","Guam":"3/20/20","American Samoa":"3/23/20","Virgin islands":"3/23/20","Norther Mariana Islands":"3/20/20"};
+
         getGlobalData(parseData);
         
         function getLocation()
@@ -131,8 +147,122 @@
           navigator.geolocation.getCurrentPosition(success, error, options);
         }
 
+        function updateCountyList(select)
+        {
+          var countySelect = document.getElementById("countySelect");
+          countySelect.options.length = 0;
+          let countyList = getCountiesList(select.value);
+
+          
+          var option = document.createElement("option");
+          option.text = "Whole State";
+          countySelect.add(option);
+          
+          for(let i = 0; i < countyList.length; i++)
+          {
+            var option = document.createElement("option");
+            option.text = countyList[i];
+            countySelect.add(option);
+          }
+
+          var leData = getState(select.value);
+
+          let countyPoints = []; let newBarArr = [];
+          for(let i = 0; i < leData[1].length; i++)
+          {
+            if(leData[1][i] != undefined)
+              countyPoints.push(leData[1][i].confirmed);
+          }
+
+          let found = false;
+          for(let i = 0; i < leData[1].length; i++)
+          {
+            if(leData[0][i] == homeOrderMap[select.value])
+              found = true;
+
+            if(found)
+              newBarArr.push(countyPoints[countyPoints.length-1]);
+            else
+              newBarArr.push(0);
+          }
+
+          mixedChart.options.title.text = select.value
+        
+          mixedChart.data.datasets[1].data = newBarArr
+          mixedChart.data.datasets[0].data = countyPoints;
+          mixedChart.update();
+        }
+
+        function selectCounty(select)
+        {
+          var stateName = document.getElementById("stateSelect").value;
+          var countyName = select.value;
+
+          var leData = null;
+          if(countyName != "Whole State")
+            leData = getCounty(countyName, stateName);
+          else
+            leData = getState(stateName);
+
+          console.log(leData)
+
+          let countyPoints = []; let newBarArr = [];
+          for(let i = 0; i < leData[1].length; i++)
+          {
+            if(leData[1][i] != undefined)
+              countyPoints.push(leData[1][i].confirmed);
+          }
+
+          let found = false;
+          for(let i = 0; i < leData[1].length; i++)
+          {
+            if(leData[0][i] == homeOrderMap[stateName])
+              found = true;
+
+            if(found)
+              newBarArr.push(countyPoints[countyPoints.length-1]);
+            else
+              newBarArr.push(0);
+          }
+
+
+          if(countyName != "Whole State")
+            mixedChart.options.title.text = `${countyName}, ${stateName}`
+          else
+            mixedChart.options.title.text = stateName
+          
+          mixedChart.data.datasets[1].data = newBarArr
+          mixedChart.data.datasets[0].data = countyPoints;
+          mixedChart.update();
+        }
+
         function parseData(data)
         {
+          var stateSelect = document.getElementById('stateSelect');
+          var countySelect = document.getElementById('countySelect');
+
+          var stateList = [];
+          for(let i = 0; i < data[0][2].length; i++)
+          {
+            let currState = data[0][2][i].state;
+            if(currState != undefined)
+            {
+              if(stateList.indexOf(currState) < 0)
+              {
+                stateList.push(currState)
+              }
+            }
+          }
+          stateList.splice(stateList.length-2);
+
+          for(let i = 0; i < stateList.length; i++)
+          {
+            var option = document.createElement("option");
+            option.text = stateList[i];
+            stateSelect.add(option);
+          }
+          
+
           var globalData = document.getElementById('globalData');
           var globalPie = document.getElementById('globalPie');
           
@@ -155,7 +285,7 @@
           let countryNames = []; let countryValues = []; let colorMap = {};
           for(let i = 0; i < lastCountryDay.length; i++)
           {
-            countryNames.push(lastCountryDay[i][0])
+            countryNames.push(lastCountryDay[i][0]);
             countryValues.push(lastCountryDay[i][1].confirmed)
             var randomColor = '#'+Math.floor(Math.random()*16777215).toString(16);
             colorMap[lastCountryDay[i][0]] = randomColor;
@@ -168,42 +298,128 @@
           }
 
           // ================== Draw Charts ==================
-          var myPieChart = new Chart(globalPie, {
-            type: "doughnut",
-            data: {
-              labels: countryNames,
-              datasets: [{
-                label: "My First Dataset",
-                data: countryValues,
-                backgroundColor: countryColors,
-                borderColor: "#1d1d1d",
-                borderWidth: 0.35
-              }]
-            },
-            options: {
-              title: {
-                display: true,
-                text: 'Covid-19 Country Data',
-                fontColor: '#aaa'
-              },
-              legend: {
-                display: false
-              }
-            }
-          });
+          // var myPieChart = new Chart(globalPie, {
+          //   type: "doughnut",
+          //   data: {
+          //     labels: countryNames,
+          //     datasets: [{
+          //       label: "My First Dataset",
+          //       data: countryValues,
+          //       backgroundColor: countryColors,
+          //       borderColor: "#1d1d1d",
+          //       borderWidth: 0.35
+          //     }]
+          //   },
+          //   options: {
+          //     title: {
+          //       display: true,
+          //       text: 'Covid-19 Country Data',
+          //       fontColor: '#aaa'
+          //     },
+          //     legend: {
+          //       display: false
+          //     }
+          //   }
+          // });
 
-          let geoData = findClosestCounty(data, window.dates.length-1);
+          let geoData = getCounty('cook', 'illinois');
           console.log(geoData);
-
-          let locationLabel = `${geoData[1][0].county}, ${geoData[1][0].state}`;
+          if(geoData == null)
+          {
+            console.log('rip');
+          }
 
           let dataPoints = [];
           for(let i = 0; i < geoData[1].length; i++)
           {
             dataPoints.push(geoData[1][i].confirmed);
           }
-          
+          let locationLabel = `${geoData[1][0].county}, ${geoData[1][0].state}`;
 
+          var kevTest = document.getElementById('kevTest');
+
+          let kevData = [];
+          let found = false;
+          for(let i = 0; i < dataPoints.length-1; i++)
+          {
+            
+            if(geoData[0][i] == "3/29/20")
+            {
+              found = true;
+              
+            }
+
+            if(found)
+            {
+              kevData.push(14000);
+            }
+            else{
+              kevData.push(0);
+            }
+          }
+         
+
+          var mixedChart = new Chart(kevTest, {
+            "type": "line",
+            "data": {
+              "labels": geoData[0],
+              "datasets": [{
+                "label": "Confirmed Cases",
+                "data": dataPoints,
+                "fill": false,
+                "borderColor": "#d9d9d9",
+                "lineTension": 0.1
+              },{
+                label:'Stay at home order',
+                data: kevData,
+                backgroundColor: "rgba(255,0,0,0.4)",
+                type:'bar'
+              
+             }],
+            
+            },
+            "options": {
+              responsive: true,
+              title: {
+                display: true,
+                text: locationLabel,
+                fontColor: "#aaa"
+              },
+              legend: {
+                labels: {
+                  fontColor: "#aaa"
+                }
+              },
+              scales: {
+                xAxes: [{
+                  display: true,
+                  barPercentage: 1.25,
+                  gridLines: {
+                    display: true,
+                    color: "rgba(255, 255,255,0.1)"
+                  },
+                  ticks: {
+                    fontColor: "#aaa" 
+                  }
+                }],
+                yAxes: [{
+                  display: true,
+                  gridLines: {
+                    display: true,
+                    color: "rgba(255, 255,255,0.1)"
+                  },
+                  ticks: {
+                    fontColor: "#aaa" 
+                  }
+                }]
+              }
+            }
+            
+          });
+         
+          window.mixedChart = mixedChart;
+
+          /*
           var myLineChart = new Chart(globalData, {
             "type": "line",
             "data": {
@@ -253,55 +469,150 @@
             }
             
           });
+          */
           
           // ================== Draw Charts ==================
 
-          var daySlider = document.createElement('input');
-          daySlider.type = 'range';
-          daySlider.id = 'daySlider';
-          daySlider.min = '0';
-          daySlider.max =  Object.keys(topCountriesPerDate).length-1;
-          daySlider.step = '1';
-          daySlider.value =  Object.keys(topCountriesPerDate).length-1;
-          daySlider.className = "slider";
-          daySlider.addEventListener('input', function() 
+          // var daySlider = document.createElement('input');
+          // daySlider.type = 'range';
+          // daySlider.id = 'daySlider';
+          // daySlider.min = '0';
+          // daySlider.max =  Object.keys(topCountriesPerDate).length-1;
+          // daySlider.step = '1';
+          // daySlider.value =  Object.keys(topCountriesPerDate).length-1;
+          // daySlider.className = "slider";
+          // daySlider.addEventListener('input', function() 
+          // {
+          //   let countryKeys = Object.keys(topCountriesPerDate);
+          //   let currDay = topCountriesPerDate[countryKeys[Number(this.value)]];
+
+          //   let countryNames = []; let countryValues = [];
+          //   for(let i = 0; i < currDay.length; i++)
+          //   {
+          //     countryNames.push(currDay[i][0])
+          //     countryValues.push(currDay[i][1].confirmed)
+          //   }
+
+          //   let countryColors = [];
+          //   for(let i = 0; i < countryNames.length; i++)
+          //   {
+          //     countryColors.push(colorMap[countryNames[i]]);
+          //   }
+
+          //   document.getElementById('currentDay').innerText = window.dates[Number(this.value)];
+
+          //   myPieChart.data.labels = countryNames;
+          //   myPieChart.data.datasets[0].data = countryValues;
+          //   myPieChart.data.datasets[0].backgroundColor = countryColors;
+          //   myPieChart.update();
+
+
+          // });
+
+          // var currentDay = document.createElement('span');
+          // currentDay.id = 'currentDay';
+          // currentDay.innerText = window.dates[window.dates.length-1];
+          // currentDay.style.padding = "10px";
+          // currentDay.style.fontWeight = "bold";
+          // currentDay.style.fontSize = "15px";
+          // currentDay.style.color = "#d9d9d9";
+
+          // document.getElementById('opt').appendChild(daySlider);
+          // document.getElementById('opt').appendChild(currentDay);
+        }
+
+        function getCountiesList(state)
+        {
+          let chunk = [];
+          for(let j = 0; j < data.length; j++)
           {
-            let countryKeys = Object.keys(topCountriesPerDate);
-            let currDay = topCountriesPerDate[countryKeys[Number(this.value)]];
+            let usaData = data[j][2];
 
-            let countryNames = []; let countryValues = [];
-            for(let i = 0; i < currDay.length; i++)
+            for(let i = 0; i < usaData.length; i++)
             {
-              countryNames.push(currDay[i][0])
-              countryValues.push(currDay[i][1].confirmed)
+              if(usaData[i].state != undefined)
+              {
+                if(state.toLocaleLowerCase() == usaData[i].state.toLocaleLowerCase())
+                {
+                  if(chunk.indexOf(usaData[i].county) < 0)
+                    chunk.push(usaData[i].county);
+                }
+              }
             }
+          }
+          
+          return chunk;
+        }
 
-            let countryColors = [];
-            for(let i = 0; i < countryNames.length; i++)
+        function getCounty(county, state)
+        {
+          let chunk = [];
+          let countyArr = [];
+          let dateArr = [];
+          for(let j = 0; j < data.length; j++)
+          {
+            let usaData = data[j][2];
+            let candidate = null;
+
+            for(let i = 0; i < usaData.length; i++)
             {
-              countryColors.push(colorMap[countryNames[i]]);
+              if(usaData[i].state != undefined)
+              {
+                if(county.toLocaleLowerCase() == usaData[i].county.toLocaleLowerCase() && state.toLocaleLowerCase() == usaData[i].state.toLocaleLowerCase())
+                {
+                  candidate = usaData[i];
+                }
+              }
             }
+            countyArr.push(candidate);
+            dateArr.push(data[j][0])
+          }
+          chunk.push(dateArr);
+          chunk.push(countyArr);
+          
+          return chunk;
+        }
 
-            document.getElementById('currentDay').innerText = window.dates[Number(this.value)];
+        function getState(state)
+        {
+          let chunk = [];
 
-            myPieChart.data.labels = countryNames;
-            myPieChart.data.datasets[0].data = countryValues;
-            myPieChart.data.datasets[0].backgroundColor = countryColors;
-            myPieChart.update();
+         
+          let stateList = [];
+          let dateArr = [];
 
+          for(let j = 0; j < data.length; j++)
+          {
+            let usaData = data[j][2];
+            let stateObject = {};
+            let stateFound = false;
 
-          });
+            for(let i = 0; i < usaData.length; i++)
+            {
+              if(usaData[i].state != undefined)
+              {
+                if(state.toLocaleLowerCase() == usaData[i].state.toLocaleLowerCase())
+                {
+                  if(!stateFound)
+                  {
+                    stateObject.name = state;
+                    stateObject.confirmed = usaData[i].confirmed;
+                  }
+                  else{
+                    stateObject.confirmed += usaData[i].confirmed;
+                  }
 
-          var currentDay = document.createElement('span');
-          currentDay.id = 'currentDay';
-          currentDay.innerText = window.dates[window.dates.length-1];
-          currentDay.style.padding = "10px";
-          currentDay.style.fontWeight = "bold";
-          currentDay.style.fontSize = "15px";
-          currentDay.style.color = "#d9d9d9";
-
-          document.getElementById('opt').appendChild(daySlider);
-          document.getElementById('opt').appendChild(currentDay);
+                  stateFound = true;
+                }
+              }
+            }
+            stateList.push(stateObject);
+            dateArr.push(data[j][0])
+          }
+          chunk.push(dateArr);
+          chunk.push(stateList);
+          
+          return chunk;
         }
 
         function findClosestCounty(data)
